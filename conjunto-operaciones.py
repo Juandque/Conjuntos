@@ -62,9 +62,11 @@ class ConjuntoOperacionesApp:
         self.result_label.config(text=f"Diferencia: {resultado}")
 
     def venn(self):
-        conjunto1 = set(self.entry_1.get().split())
-        conjunto2 = set(self.entry_2.get().split())
-        venn2([conjunto1, conjunto2],(conjunto1, conjunto2))
+        #conjunto1 = set(self.entry_1.get().split())
+        #conjunto2 = set(self.entry_2.get().split())
+        conjunto1 = {"A", "B", "C"}
+        conjunto2 = {"B", "C", "D"}
+        venn2(subsets=(conjunto1, conjunto2), set_labels=("A","B"))
         plt.show()
 
     @staticmethod

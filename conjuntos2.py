@@ -144,3 +144,4 @@ class ConjuntoOperacionesApp:
 root = tk.Tk()
 app = ConjuntoOperacionesApp(root)
 root.mainloop()
+
