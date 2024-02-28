@@ -1,4 +1,7 @@
 import tkinter as tk
+import pandas as pd
+from matplotlib import pyplot as plt
+from matplotlib_venn import venn2, venn2_circles, venn3, venn3_circles
 
 class prueba:
     operaciones = ["union","interseccion","diferencia","complemento","subconjunto", "disyunto","cardinalidad"]
@@ -31,6 +34,9 @@ class prueba:
         self.operacion_entry = tk.Entry(master)
         self.operacion_entry.pack()
 
+        self.diagrama_venn_button = tk.Button(master, text="Mostrar Diagrama de Venn", command=self.mostrar_diagrama)
+        self.diagrama_venn_button.pack()
+
         self.operacion_button = tk.Button(master, text="Realizar Operación", command=self.operacion)
         self.operacion_button.pack()
 
@@ -62,6 +68,22 @@ class prueba:
             i+=1
         resultado=", ".join(pila.pop())
         self.resultado_label.config(text=f"Resultado: {resultado}")
+
+    def mostrar_diagrama(self):
+        diccionario_conjuntos={"A":set(self.coonjuntoA_entry.get().split()),"B":set(self.coonjuntoB_entry.get().split()),"C":set(self.coonjuntoC_entry.get().split())}
+        diccionario_conjuntos = {key: list(value) for key, value in diccionario_conjuntos.items()}
+        data_frame=pd.DataFrame(diccionario_conjuntos)
+
+        if len(data_frame.columns) == 2:
+            venn2(subsets=[set(data_frame[col])for col in data_frame.columns], set_labels=data_frame.columns)
+            plt.title("Diagrama de Venn 2 conjuntos")
+            venn2_circles(subsets=[set(data_frame[col])for col in data_frame.columns], linestyle='solid')
+        elif len(data_frame.columns) == 3:
+            venn3(subsets=[set(data_frame[col])for col in data_frame.columns], set_labels=data_frame.columns)
+            plt.title("Diagrama de Venn 3 conjuntos")
+            venn3_circles(subsets=[set(data_frame[col])for col in data_frame.columns], linestyle='solid')
+        
+        plt.show()
 
 
     def definir_operacion(self, operacion, conjunto1, conjunto2):
