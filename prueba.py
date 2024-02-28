@@ -3,6 +3,14 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib_venn import venn2, venn2_circles, venn3, venn3_circles
 
+#Abstraccion: Para el programa sera necesario que existan almenos 4 entradas del usuario, 3 conjuntos y operaciones, ademas de 2 botones, para realizar la operacion y dibujar el diagrama
+            #Ademas las operaciones entre conjuntos son metodos simples de implementar, aunque sea sin utilizar los metodos predefinidos por python, estos metodos se pueden implementar
+            #Mediante recorridos de listas, la parte mas compleja sera la de darle estructura a las operaciones combinadas entre conjuntos
+
+#Descomposicion: Los metodos de operaciones entre conjuntos implmentan parametros de 2 listas, es decir que siempre se realizan operaciones entre 2 conjuntos, ya que mediante el manejo de
+            #las operaciones , no sera necesario crear metodos para hacer operaciones entre 3 conjuntos, para el manejo de la operacion se usa una pila, para realizar operaciones con
+            #jerarquia, en orden de izquierda a derecha, se reconocen mediante comparacion de strings las operaciones y se realizan secuencialmente
+
 class prueba:
     operaciones = ["union","interseccion","diferencia","complemento","subconjunto", "disyunto","cardinalidad"]
 
@@ -43,16 +51,22 @@ class prueba:
         self.resultado_label = tk.Label(master, text="")
         self.resultado_label.pack()
 
+    #Metodo para dar manejo a la solicitud de una operacion ingresada por el usuario
     def operacion(self):
+        #Obtener la operacion ingresada
         operacion =list((self.operacion_entry.get().split()))
         diccionario_conjuntos={"A":list(self.coonjuntoA_entry.get().split()),"B":list(self.coonjuntoB_entry.get().split()),"C":list(self.coonjuntoC_entry.get().split())}
+        #Calcular el conjunto unversal para hacer ciertos calculos
         universal = self.calcular_universal_conjuntos(diccionario_conjuntos["A"], diccionario_conjuntos["B"], diccionario_conjuntos["C"])
         pila= []
 
         i=0
+        #Desglosamos la operacion usando una pila
         while i < len(operacion):
+            #Si el elemento es un operando o conjunto se guarda en una pila
             if(operacion[i] in ("A", "B", "C")):
                 pila.append(diccionario_conjuntos[operacion[i]])
+            #Si el elemento es un operador se debe llamar al metodo de operacion y guardar el resultado final en la pila nuevamente
             if(operacion[i] in ("union", "interseccion", "diferencia")):
                 operador=operacion[i]
                 i+=1
@@ -61,6 +75,7 @@ class prueba:
                 conjunto2=pila.pop()
                 aux= self.definir_operacion(operador, conjunto1, conjunto2)
                 pila.append(aux)
+            #Si el operando es el complemento se hace un proceso distinto
             if(operacion [i] == "complemento"):
                 conjunto=pila.pop()
                 aux= self.complemento_conjuntos(conjunto, universal)
@@ -69,23 +84,23 @@ class prueba:
         resultado=", ".join(pila.pop())
         self.resultado_label.config(text=f"Resultado: {resultado}")
 
+    #Metodo que permite mostrar el diagrama de Venn
     def mostrar_diagrama(self):
         diccionario_conjuntos={"A":set(self.coonjuntoA_entry.get().split()),"B":set(self.coonjuntoB_entry.get().split()),"C":set(self.coonjuntoC_entry.get().split())}
-        diccionario_conjuntos = {key: list(value) for key, value in diccionario_conjuntos.items()}
-        data_frame=pd.DataFrame(diccionario_conjuntos)
 
-        if len(data_frame.columns) == 2:
-            venn2(subsets=[set(data_frame[col])for col in data_frame.columns], set_labels=data_frame.columns)
+        #Define la forma del diagrama de Venn, 2 conjunto o 3
+        if len(diccionario_conjuntos) == 2:
+            venn2(subsets=[set(diccionario_conjuntos[col])for col in diccionario_conjuntos])
             plt.title("Diagrama de Venn 2 conjuntos")
-            venn2_circles(subsets=[set(data_frame[col])for col in data_frame.columns], linestyle='solid')
-        elif len(data_frame.columns) == 3:
-            venn3(subsets=[set(data_frame[col])for col in data_frame.columns], set_labels=data_frame.columns)
+            venn2_circles(subsets=[set(diccionario_conjuntos[col])for col in diccionario_conjuntos], linestyle='solid')
+        elif len(diccionario_conjuntos) == 3:
+            venn3(subsets=[set(diccionario_conjuntos[col])for col in diccionario_conjuntos])
             plt.title("Diagrama de Venn 3 conjuntos")
-            venn3_circles(subsets=[set(data_frame[col])for col in data_frame.columns], linestyle='solid')
+            venn3_circles(subsets=[set(diccionario_conjuntos[col])for col in diccionario_conjuntos], linestyle='solid')
         
         plt.show()
 
-
+    #Redirige la operacion hacia el metodo definido
     def definir_operacion(self, operacion, conjunto1, conjunto2):
         resultado= list()
         if operacion==self.operaciones[0]:
@@ -96,6 +111,7 @@ class prueba:
             resultado= self.diferencia_conjuntos(conjunto1, conjunto2)
         return resultado
     
+    #Metodo que calcula la union de 2 conjuntos, retorna una lista
     @staticmethod
     def union_conjuntos(conjunto1, conjunto2):
         union = list()
@@ -107,6 +123,7 @@ class prueba:
                 union.append(elemento)
         return union
     
+    #Metodo que calcula la interseccion de 2 conjuntos, retorna una lista
     @staticmethod
     def interseccion_conjuntos(conjunto1, conjunto2):
         interseccion = list()
@@ -114,7 +131,8 @@ class prueba:
             if elemento in conjunto2:
                 interseccion.append(elemento)
         return interseccion
-
+    
+    #Metodo que calcula la diferencia entre 2 conjuntos, retorna una lista
     @staticmethod
     def diferencia_conjuntos(conjunto1, conjunto2):
         diferencia = list()
@@ -123,6 +141,7 @@ class prueba:
                 diferencia.append(elemento)
         return diferencia
     
+    #Metodo que calcula el complemento de un conjunto dado, retorna una lista
     @staticmethod
     def complemento_conjuntos(conjunto, universo):
         complemento=list()
@@ -131,6 +150,7 @@ class prueba:
                 complemento.append(elemento)
         return complemento
     
+    #Metodo que permite calcular el conjunto universal
     @staticmethod
     def calcular_universal_conjuntos(conjunto1, cojunto2, conjunto3):
         universal=list(conjunto1)
