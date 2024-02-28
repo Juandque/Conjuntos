@@ -3,6 +3,8 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib_venn import venn2, venn2_circles, venn3, venn3_circles
 
+#Autores: Juan Manuel Duque Giraldo && Kevin Santiago Buitron
+
 #Abstraccion: Para el programa sera necesario que existan almenos 4 entradas del usuario, 3 conjuntos y operaciones, ademas de 2 botones, para realizar la operacion y dibujar el diagrama
             #Ademas las operaciones entre conjuntos son metodos simples de implementar, aunque sea sin utilizar los metodos predefinidos por python, estos metodos se pueden implementar
             #Mediante recorridos de listas, la parte mas compleja sera la de darle estructura a las operaciones combinadas entre conjuntos
