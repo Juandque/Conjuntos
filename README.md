@@ -1,4 +1,5 @@
 Autores: Juan Manuel Duque && Kevin Santiago Buitron
+
 Este proyecto desarrolla una forma sencilla de operaciones entre conjuntos usando Python
 
 Cuenta con una ventana donde se ingresan los conjuntos y una operacion en lenguaje natural, las operaciones se reconocen mediante palabras
